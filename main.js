@@ -88,13 +88,9 @@ const determinarMeridiano = (horas) => {
   if (horas >= 0 && horas < 12) return "AM";
   else return "PM";
 };
-const direccionToString = (state_district, suburb, city, country, state) => {
-  if (suburb === undefined && state_district === undefined) {
-    return `${country},${city}`;
-  } else if (suburb === undefined) {
-    return `${country},${city},${state_district}`;
-  }
-  return `${country},${state}`;
+const isValidState = (state) => {
+  if (state !== undefined) return state + ", ";
+  return "";
 };
 const renderClimaCard = async (posicion) => {
   //obtencion de clima y de direccion
@@ -132,13 +128,9 @@ const renderClimaCard = async (posicion) => {
         <p class="hora thunderstormTextColor"> ${hours}:${minutes} ${meridiano}</p>
       </div>
       <div class="ciudad-info-container">
-        <p class="ciudad thunderstormTextColor">${direccionToString(
-          state_district,
-          suburb,
-          city,
-          country,
+        <p class="ciudad thunderstormTextColor">${isValidState(
           state
-        )}</p>
+        )}${country}</p>
       </div>
   `;
 };
