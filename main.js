@@ -3,14 +3,16 @@ const body = document.querySelector("body");
 const climaCard = document.querySelector(".clima-card");
 const searchBtn = document.querySelector(".search-btn");
 const searchText = document.querySelector("#search");
-let hours = 1;
-let minutes = 1;
+let hours;
+let minutes;
 let esDia;
 const setearHora = () => {
   const date = new Date();
   hours = date.getHours();
   minutes = date.getMinutes();
   esDia = hours >= 6 && hours < 18;
+  if (hours < 10) hours = "0" + hours;
+  if (minutes < 10) minutes = "0" + minutes;
 };
 setearHora();
 const mostrarError = (error) => {
@@ -86,6 +88,14 @@ const determinarMeridiano = (horas) => {
   if (horas >= 0 && horas < 12) return "AM";
   else return "PM";
 };
+const direccionToString = (state_district, suburb, city, country, state) => {
+  if (suburb === undefined && state_district === undefined) {
+    return `${country},${city}`;
+  } else if (suburb === undefined) {
+    return `${country},${city},${state_district}`;
+  }
+  return `${country},${state}`;
+};
 const renderClimaCard = async (posicion) => {
   //obtencion de clima y de direccion
   const clima = await obtenerClima(posicion);
@@ -95,10 +105,7 @@ const renderClimaCard = async (posicion) => {
   const descripcion = primeraLetraAMayus(clima.weather[0].description);
   const icon = clima.weather[0].icon;
   const idClima = clima.weather[0].id;
-  let { state_district, suburb, city } = direccion.address;
-  if (suburb === undefined) {
-    suburb = city;
-  }
+  let { state_district, suburb, city, country, state } = direccion.address;
   setearHora();
   const meridiano = determinarMeridiano(hours);
   setBackground(idClima);
@@ -125,7 +132,13 @@ const renderClimaCard = async (posicion) => {
         <p class="hora thunderstormTextColor"> ${hours}:${minutes} ${meridiano}</p>
       </div>
       <div class="ciudad-info-container">
-        <p class="ciudad thunderstormTextColor">${state_district}, ${suburb}</p>
+        <p class="ciudad thunderstormTextColor">${direccionToString(
+          state_district,
+          suburb,
+          city,
+          country,
+          state
+        )}</p>
       </div>
   `;
 };
@@ -139,9 +152,11 @@ const buscarDireccion = async () => {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
     searchText.value
   )}&format=json&addressdetails=1`;
+  searchText.value = "";
   try {
     const res = await fetch(url);
     const ubicacion = await res.json();
+    console.log(ubicacion);
     const { lat, lon } = ubicacion[0];
     const pseudoPosicion = {
       coords: {
