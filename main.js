@@ -114,7 +114,7 @@ const renderClimaCard = async (posicion) => {
         <div class="clima-info-container">
           <img
             id="weatherIcon"
-            src="http://openweathermap.org/img/w/${icon}.png"
+            src="https://openweathermap.org/img/w/${icon}.png"
             alt="icono de clima"
           />
           <h2 id="temp" class="thunderstormTextColor">${temp}°C</h2>
