@@ -156,7 +156,7 @@ const buscarDireccion = async () => {
   try {
     const res = await fetch(url);
     const ubicacion = await res.json();
-    console.log(ubicacion);
+
     const { lat, lon } = ubicacion[0];
     const pseudoPosicion = {
       coords: {
